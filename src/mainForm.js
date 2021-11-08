@@ -48,29 +48,28 @@ const MainForm = (props) => {
             const start = 'https://api.shrtco.de/v2/shorten?url=';
             const longLink = inputLink;
             // console.log("fetching...");                 
-            fetch(start + longLink)
-            .then(response => response.json())
-            .then(data => {
-                // console.log(data);
-                setSubmitBtn("Shorten it!");    // reset submit button message
-                clearInterval(submitBtnChg);    // stops button message changing 
-                setHideSpinner(true)            // hide spinner
-                if(!data.ok){
-                    setErrorMsg(HandleError(data.error_code));
-                } else{
-                    let display = shortDomain === "shrtco.de" ? data.result.short_link
-                        : shortDomain === "9qr.de" ? data.result.short_link2
-                            : data.result.short_link3;
-                    let newLink = {
-                        shortLink: display,
-                        longLink: data.result.original_link,
-                    }
-                    setInputLink("");
-                    let arr = linksArray;
-                    arr.unshift(newLink);
-                    setLinksArray([...arr]);  // spread operator to trigger re-render
+            const response = await fetch(start + longLink);
+            const data = await response.json();
+            // console.log(data);
+            setSubmitBtn("Shorten it!");    // reset submit button message
+            clearInterval(submitBtnChg);    // stops button message changing 
+            setHideSpinner(true)            // hide spinner
+            if(!data.ok){
+                setErrorMsg(HandleError(data.error_code));
+            } else{
+                let display = shortDomain === "shrtco.de" ? data.result.short_link
+                    : shortDomain === "9qr.de" ? data.result.short_link2
+                        : data.result.short_link3;
+                let newLink = {
+                    shortLink: display,
+                    longLink: data.result.original_link,
                 }
-            })
+                setInputLink("");
+                let arr = linksArray;
+                arr.unshift(newLink);
+                setLinksArray([...arr]);  // spread operator to trigger re-render
+            }
+      
         } else {
             setErrorMsg(HandleError(2))
         }
