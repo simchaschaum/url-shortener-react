@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@material-ui/core";
 import './App.css';
 import HandleError from "./handleError";
@@ -13,6 +13,8 @@ const MainForm = (props) => {
     const [submitBtn, setSubmitBtn] = useState("Shorten it!");
     const [linksArray, setLinksArray] = useState([])
 
+    const linkRef = useRef(null);
+
     useEffect(()=>{
         if(localStorage.getItem('linksArray') !== null){
             setLinksArray([...JSON.parse(localStorage.getItem('linksArray'))])
@@ -20,7 +22,7 @@ const MainForm = (props) => {
     },[]);
 
     useEffect(()=>{
-        localStorage.setItem('linksArray', JSON.stringify(linksArray))
+        localStorage.setItem('linksArray', JSON.stringify(linksArray));
     },[linksArray])
 
     const handleInput = (e) => {
@@ -47,10 +49,8 @@ const MainForm = (props) => {
             let submitBtnChg = setInterval(msgChange, 3000);    
             const start = 'https://api.shrtco.de/v2/shorten?url=';
             const longLink = inputLink;
-            // console.log("fetching...");                 
             const response = await fetch(start + longLink);
             const data = await response.json();
-            // console.log(data);
             setSubmitBtn("Shorten it!");    // reset submit button message
             clearInterval(submitBtnChg);    // stops button message changing 
             setHideSpinner(true)            // hide spinner
@@ -67,7 +67,8 @@ const MainForm = (props) => {
                 setInputLink("");
                 let arr = linksArray;
                 arr.unshift(newLink);
-                setLinksArray([...arr]);  // spread operator to trigger re-render
+                setLinksArray([...arr]);  // using spread operator to trigger re-render
+                linkRef.current.scrollIntoView();
             }
       
         } else {
@@ -77,10 +78,16 @@ const MainForm = (props) => {
 
     const clearLinks = async () => {
         setLinksArray([]);
+        firstLink = [];
+        restOfLinks = [];
     }
 
     let clearLinksBtn = linksArray.length === 0 ? null
         : <button id="clearLinks" className="link" onClick={()=>clearLinks()}>Clear Links</button>
+
+    
+    let firstLink = linksArray.length === 0 ? [] : linksArray[0];
+    let restOfLinks = linksArray.length < 1 ? [] : linksArray.filter((item,index) => index>0);
 
     return(
         <div>
@@ -111,7 +118,16 @@ const MainForm = (props) => {
                 </FormControl>
             </form>
             {clearLinksBtn}
-            <div>{linksArray.map((item,index) => (<div key={index}>
+            <div>{firstLink.length === 0 ? null : 
+                <div ref={linkRef}>
+                    <Link 
+                        link={firstLink.shortLink}
+                        originalLink={firstLink.longLink}
+                    />
+                </div>
+            }
+            </div>
+            <div>{restOfLinks.map((item,index) => (<div key={index}>
                 <Link 
                     link={item.shortLink}
                     originalLink={item.longLink}
