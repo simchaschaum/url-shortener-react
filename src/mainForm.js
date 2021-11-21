@@ -33,6 +33,13 @@ const MainForm = (props) => {
     const handleSetShortDomain = (e) => {
         setShortDomain(e.target.value);
     }
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        })
+    }
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -133,6 +140,7 @@ const MainForm = (props) => {
                     originalLink={item.longLink}
                 />
                 </div>))}</div>
+            {linksArray.length === 0 ? null : <button onClick={()=>scrollToTop()}>Scroll to Top</button>} 
         </div>
     )
 }
