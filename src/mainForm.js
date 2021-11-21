@@ -11,7 +11,8 @@ const MainForm = (props) => {
     const [errorMsg, setErrorMsg] = useState("");
     const [hideSpinner, setHideSpinner] = useState(true);
     const [submitBtn, setSubmitBtn] = useState("Shorten it!");
-    const [linksArray, setLinksArray] = useState([])
+    const [linksArray, setLinksArray] = useState([]);
+    const [scrollPosition, setScrollPosition] = useState(0);
 
     const linkRef = useRef(null);
 
@@ -24,6 +25,19 @@ const MainForm = (props) => {
     useEffect(()=>{
         localStorage.setItem('linksArray', JSON.stringify(linksArray));
     },[linksArray])
+
+    // Finding scroll position (to be used for 'scroll to top' button)
+    const handleScroll = () => {
+        let position = window.pageYOffset;
+        setScrollPosition(position);
+    };
+
+    useEffect(()=>{
+        window.addEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+          };
+    },[]);
 
     const handleInput = (e) => {
         setInputLink(e.target.value);
@@ -140,9 +154,11 @@ const MainForm = (props) => {
                     originalLink={item.longLink}
                 />
                 </div>))}</div>
-            {linksArray.length === 0 ? null : <button onClick={()=>scrollToTop()}>Scroll to Top</button>} 
+            {scrollPosition < 100? null : <button id="scrollToTop" onClick={()=>scrollToTop()}>Scroll to Top</button>} 
         </div>
     )
 }
 
 export default MainForm;
+
+

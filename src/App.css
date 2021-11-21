@@ -47,12 +47,6 @@ body{
     display: flex;
     justify-content: space-between;
 }
-/* login/ registration form */
-div#loginErrorMsg{
-    margin-bottom: -24px;
-}
-/* Login Buttons */
-
 
 /* Title */
 h1{
@@ -209,4 +203,19 @@ div.linkDiv{
 }
 .original-link{
     font-size: 0.75em;
+}
+
+/* Scroll to top button */
+#scrollToTop{
+    position: fixed;
+    bottom: 20px;
+    right: 5%;
+    border: none;
+    border-radius: 5px;
+    background-color: #689999;
+    margin-bottom: 8px;
+    padding: 7.5px;
+}
+#scrollToTop:hover{
+    background-color: #408080;
 }
